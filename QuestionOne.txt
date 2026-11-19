@@ -1,0 +1,611 @@
+## Statistical Inference Project
+# Question One (i)
+mle.exp <- function(n,lambda){
+  sample <- rexp(n,rate = lambda)
+  lambda_sample <- n/sum(sample)
+  return(list(sample=sample,lambda_sample=lambda_sample))
+}
+# (ii)
+# Use set seed function using the sum of the two student id numbers
+set.seed(48703186)
+mle.exp(10,1)
+
+# (iii)
+set.seed(48703186)
+results <- numeric(1000)
+# Create a for loop to loop the function over 1000 times
+for (i in 1:1000) {
+  result <- mle.exp(10,1)
+  results[i] <- result$lambda_sample
+}
+results
+# Calculate the mean and variance of the estimators
+mean_10 <- base::mean(results)
+variance_10 <- var(results)
+bias_10 <- mean_10 - 1
+bias_10squared <- bias_10^2
+MSE_10 <- variance_10 + bias_10squared
+
+# (iv)
+# n = 20
+set.seed(48703186)
+res_20 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(20,1)
+  res_20[i] <- res$lambda_sample
+}
+res_20
+
+mean_20 <- mean(res_20)
+variance_20 <- var(res_20)
+bias_20 <- mean_20 - 1
+bias_20squared <- bias_20^2
+MSE_20 <- variance_20 + bias_20squared
+
+
+
+# n = 50
+set.seed(48703186)
+res_50 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(50,1)
+  res_50[i] <- res$lambda_sample
+}
+res_50
+
+mean_50 <- mean(res_50)
+variance_50 <- var(res_50)
+bias_50 <- mean_50 - 1
+bias_50squared <- bias_50^2
+MSE_50 <- variance_50 + bias_50squared
+
+# n = 200
+set.seed(48703186)
+res_200 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(200,1)
+  res_200[i] <- res$lambda_sample
+}
+res_200
+
+mean_200 <- mean(res_200)
+variance_200 <- var(res_200)
+bias_200 <- mean_200 - 1
+bias_200squared <- bias_200^2
+MSE_200 <- variance_200 + bias_200squared
+
+# n = 400
+set.seed(48703186)
+res_400 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(400,1)
+  res_400[i] <- res$lambda_sample
+}
+res_400
+
+mean_400 <- mean(res_400)
+variance_400 <- var(res_400)
+bias_400 <- mean_400 - 1
+bias_400squared <- bias_400^2
+MSE_400 <- variance_400 + bias_400squared
+
+# n = 1000
+set.seed(48703186)
+res_1000 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(1000,1)
+  res_1000[i] <- res$lambda_sample
+}
+res_1000
+
+mean_1000 <- mean(res_1000)
+variance_1000 <- var(res_1000)
+bias_1000 <- mean_1000 - 1
+bias_1000squared <- bias_1000^2
+MSE_1000 <- variance_1000 + bias_1000squared
+
+## Graphs
+# Bias Vs Sample Size
+par(mfrow = c(1,1))
+sample_sizes <- c(10,20,50,200,400,1000)
+biases <- c(bias_10,bias_20,bias_50,bias_200,bias_400,bias_1000)
+analytical_biases <- c(1/9,1/19,1/49,1/199,1/399,1/999)
+plot(
+  sample_sizes,
+  biases,
+  col = "blue",
+  pch = 16,
+  type = "b",
+  main = expression("Plot of Sample Sizes Vs Biases (" * lambda == 1 * ")")
+)
+lines(
+  sample_sizes,analytical_biases,
+  type = "b",
+  col = 'red',
+  pch = 16
+)
+
+legend(
+  "topright",
+  legend = c("Simulated Biases","Analytical Biases"),
+  col = c('blue','red'),
+  pch = 16,
+  lty = 1
+)
+# Efficiency vs Sample Size
+eff_10 <- (1/10)/variance_10
+eff_20 <- (1/20)/variance_20
+eff_50 <- (1/50)/variance_50
+eff_200 <- (1/200)/variance_200
+eff_400 <- (1/400)/variance_400
+eff_1000 <- (1/1000)/variance_1000
+
+effs <- c(eff_10,eff_20,eff_50,eff_200,eff_400,eff_1000)
+analytical_effs <- c((9^2*8)/10^3,(19^2*18)/20^3,(49^2*48)/50^3,(199^2*198)/200^3,(399^2*398)/400^3,(999^2*998)/1000^3)
+plot(sample_sizes,
+     effs,
+     ylim = c(0.6,1),
+     col='magenta',
+     pch = 16,
+     type='b',
+     main =expression("Plot of Sample Sizes Vs Efficiencies (" * lambda == 1 * ")")
+ )
+lines(
+  sample_sizes,
+  analytical_effs,
+  col = 'red',
+  pch = 16,
+  type = 'b'
+)
+legend(
+  "bottomright",
+  legend = c("Simulated Efficiencies","Analytical Efficiencies"),
+  col = c('magenta','red'),
+  pch = 16,
+  lty = 1
+)
+
+# Mean Squared Error Vs Sample Size
+MSEs <- c(MSE_10,MSE_20,MSE_50,MSE_200,MSE_400,MSE_1000)
+analytical_MSE <- c((10^2/((9^2)*8))+(1/9)^2,(20^2/((19^2)*18))+(1/19)^2,(50^2/((49^2)*48))+(1/49)^2,(200^2/((199^2)*198))+(1/199)^2,(400^2/((399^2)*398))+(1/399)^2,(1000^2/((999^2)*998))+(1/999)^2)
+plot(sample_sizes,
+     MSEs,
+     col = 'black',
+     type = 'b',
+     ylim = c(0,0.2),
+     pch = 16,
+     main = expression("Plot of Sample Sizes Vs Mean Squared Error (" * lambda == 1 * ")")
+     )
+lines(
+  sample_sizes,
+  analytical_MSE,
+  col = 'red',
+  pch = 16,
+  type = 'b'
+)
+legend(
+  "topright",
+  legend = c("Simulated MSE","Analytical MSE"),
+  col = c('black','red'),
+  pch=16
+)
+
+##(v)
+
+
+# Lambda = 0.5
+
+# n = 10
+set.seed(48703186)
+res_10_05 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(10,0.5)
+  res_10_05[i] <- res$lambda_sample
+}
+
+mean_10_05 <- mean(res_10_05)
+variance_10_05 <- var(res_10_05)
+bias_10_05 <- mean_10_05 - 0.5
+bias_10_05squared <- bias_10_05^2
+MSE_10_05 <- variance_10_05 + bias_10_05squared
+
+
+# n = 20
+set.seed(48703186)
+res_20_05 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(20,0.5)
+  res_20_05[i] <- res$lambda_sample
+}
+
+mean_20_05 <- mean(res_20_05)
+variance_20_05 <- var(res_20_05)
+bias_20_05 <- mean_20_05 - 0.5
+bias_20_05squared <- bias_20_05^2
+MSE_20_05 <- variance_20_05 + bias_20_05squared
+
+
+# n = 50
+set.seed(48703186)
+res_50_05 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(50,0.5)
+  res_50_05[i] <- res$lambda_sample
+}
+
+mean_50_05 <- mean(res_50_05)
+variance_50_05 <- var(res_50_05)
+bias_50_05 <- mean_50_05 - 0.5
+bias_50_05squared <- bias_50_05^2
+MSE_50_05 <- variance_50_05 + bias_50_05squared
+
+
+# n = 200
+set.seed(48703186)
+res_200_05 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(200,0.5)
+  res_200_05[i] <- res$lambda_sample
+}
+
+mean_200_05 <- mean(res_200_05)
+variance_200_05 <- var(res_200_05)
+bias_200_05 <- mean_200_05 - 0.5
+bias_200_05squared <- bias_200_05^2
+MSE_200_05 <- variance_200_05 + bias_200_05squared
+
+
+# n = 400
+set.seed(48703186)
+res_400_05 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(400,0.5)
+  res_400_05[i] <- res$lambda_sample
+}
+
+mean_400_05 <- mean(res_400_05)
+variance_400_05 <- var(res_400_05)
+bias_400_05 <- mean_400_05 - 0.5
+bias_400_05squared <- bias_400_05^2
+MSE_400_05 <- variance_400_05 + bias_400_05squared
+
+
+# n = 1000
+set.seed(48703186)
+res_1000_05 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(1000,0.5)
+  res_1000_05[i] <- res$lambda_sample
+}
+
+mean_1000_05 <- mean(res_1000_05)
+variance_1000_05 <- var(res_1000_05)
+bias_1000_05 <- mean_1000_05 - 0.5
+bias_1000_05squared <- bias_1000_05^2
+MSE_1000_05 <- variance_1000_05 + bias_1000_05squared
+
+
+## Graphs
+
+# Bias Vs Sample Size
+sample_sizes <- c(10,20,50,200,400,1000)
+
+biases_05 <- c(bias_10_05,bias_20_05,bias_50_05,
+               bias_200_05,bias_400_05,bias_1000_05)
+
+analytical_biases_05 <- c(0.5/9,0.5/19,0.5/49,
+                          0.5/199,0.5/399,0.5/999)
+
+plot(
+  sample_sizes,
+  biases_05,
+  col = "blue",
+  pch = 16,
+  type = "b",
+  main = expression("Plot of Sample Sizes Vs Biases (" * lambda == 0.5 * ")")
+)
+
+lines(
+  sample_sizes,analytical_biases_05,
+  type = "b",
+  col = 'red',
+  pch = 16
+)
+
+legend(
+  "topright",
+  legend = c("Simulated Biases","Analytical Biases"),
+  col = c('blue','red'),
+  pch = 16,
+  lty = 1
+)
+
+
+# Efficiency Vs Sample Size
+eff_10_05 <- (0.5^2/10)/variance_10_05
+eff_20_05 <- (0.5^2/20)/variance_20_05
+eff_50_05 <- (0.5^2/50)/variance_50_05
+eff_200_05 <- (0.5^2/200)/variance_200_05
+eff_400_05 <- (0.5^2/400)/variance_400_05
+eff_1000_05 <- (0.5^2/1000)/variance_1000_05
+
+effs_05 <- c(eff_10_05,eff_20_05,eff_50_05,
+             eff_200_05,eff_400_05,eff_1000_05)
+
+analytical_effs_05 <- c((9^2*8)/10^3,(19^2*18)/20^3,
+                        (49^2*48)/50^3,(199^2*198)/200^3,
+                        (399^2*398)/400^3,(999^2*998)/1000^3)
+
+plot(
+  sample_sizes,
+  effs_05,
+  ylim = c(0,1),
+  col = 'magenta',
+  pch = 16,
+  type = 'b',
+  main = expression("Plot of Sample Sizes Vs Efficiencies (" * lambda == 0.5 * ")")
+)
+
+lines(
+  sample_sizes,
+  analytical_effs_05,
+  col = 'red',
+  pch = 16,
+  type = 'b'
+)
+
+legend(
+  "bottomright",
+  legend = c("Simulated Efficiencies","Analytical Efficiencies"),
+  col = c('magenta','red'),
+  pch = 16,
+  lty = 1
+)
+
+
+# Mean Squared Error Vs Sample Size
+MSEs_05 <- c(MSE_10_05,MSE_20_05,MSE_50_05,
+             MSE_200_05,MSE_400_05,MSE_1000_05)
+
+analytical_MSE_05 <- c(
+  (0.5^2*10^2/((9^2)*8))+(0.5/9)^2,
+  (0.5^2*20^2/((19^2)*18))+(0.5/19)^2,
+  (0.5^2*50^2/((49^2)*48))+(0.5/49)^2,
+  (0.5^2*200^2/((199^2)*198))+(0.5/199)^2,
+  (0.5^2*400^2/((399^2)*398))+(0.5/399)^2,
+  (0.5^2*1000^2/((999^2)*998))+(0.5/999)^2
+)
+
+plot(
+  sample_sizes,
+  MSEs_05,
+  col = 'black',
+  type = 'b',
+  ylim = c(0,0.05),
+  pch = 16,
+  main = expression("Plot of Sample Sizes Vs Mean Squared Error (" * lambda == 0.5 * ")")
+)
+
+lines(
+  sample_sizes,
+  analytical_MSE_05,
+  col = 'red',
+  pch = 16,
+  type = 'b'
+)
+
+legend(
+  "topright",
+  legend = c("Simulated MSE","Analytical MSE"),
+  col = c('black','red'),
+  pch = 16
+)
+
+
+# Lambda = 2
+
+# n = 10
+set.seed(48703186)
+res_10_2 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(10,2)
+  res_10_2[i] <- res$lambda_sample
+}
+
+mean_10_2 <- mean(res_10_2)
+variance_10_2 <- var(res_10_2)
+bias_10_2 <- mean_10_2 - 2
+bias_10_2squared <- bias_10_2^2
+MSE_10_2 <- variance_10_2 + bias_10_2squared
+
+
+# n = 20
+set.seed(48703186)
+res_20_2 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(20,2)
+  res_20_2[i] <- res$lambda_sample
+}
+
+mean_20_2 <- mean(res_20_2)
+variance_20_2 <- var(res_20_2)
+bias_20_2 <- mean_20_2 - 2
+bias_20_2squared <- bias_20_2^2
+MSE_20_2 <- variance_20_2 + bias_20_2squared
+
+
+# n = 50
+set.seed(48703186)
+res_50_2 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(50,2)
+  res_50_2[i] <- res$lambda_sample
+}
+
+mean_50_2 <- mean(res_50_2)
+variance_50_2 <- var(res_50_2)
+bias_50_2 <- mean_50_2 - 2
+bias_50_2squared <- bias_50_2^2
+MSE_50_2 <- variance_50_2 + bias_50_2squared
+
+
+# n = 200
+set.seed(48703186)
+res_200_2 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(200,2)
+  res_200_2[i] <- res$lambda_sample
+}
+
+mean_200_2 <- mean(res_200_2)
+variance_200_2 <- var(res_200_2)
+bias_200_2 <- mean_200_2 - 2
+bias_200_2squared <- bias_200_2^2
+MSE_200_2 <- variance_200_2 + bias_200_2squared
+
+
+# n = 400
+set.seed(48703186)
+res_400_2 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(400,2)
+  res_400_2[i] <- res$lambda_sample
+}
+
+mean_400_2 <- mean(res_400_2)
+variance_400_2 <- var(res_400_2)
+bias_400_2 <- mean_400_2 - 2
+bias_400_2squared <- bias_400_2^2
+MSE_400_2 <- variance_400_2 + bias_400_2squared
+
+
+# n = 1000
+set.seed(48703186)
+res_1000_2 <- numeric(1000)
+for (i in 1:1000) {
+  res <- mle.exp(1000,2)
+  res_1000_2[i] <- res$lambda_sample
+}
+
+mean_1000_2 <- mean(res_1000_2)
+variance_1000_2 <- var(res_1000_2)
+bias_1000_2 <- mean_1000_2 - 2
+bias_1000_2squared <- bias_1000_2^2
+MSE_1000_2 <- variance_1000_2 + bias_1000_2squared
+
+
+## Graphs
+
+# Bias Vs Sample Size
+sample_sizes <- c(10,20,50,200,400,1000)
+
+biases_2 <- c(bias_10_2,bias_20_2,bias_50_2,
+              bias_200_2,bias_400_2,bias_1000_2)
+
+analytical_biases_2 <- c(2/9,2/19,2/49,
+                         2/199,2/399,2/999)
+
+plot(
+  sample_sizes,
+  biases_2,
+  col = "blue",
+  pch = 16,
+  type = "b",
+  main = expression("Plot of Sample Sizes Vs Biases (" * lambda == 2 * ")")
+)
+
+lines(
+  sample_sizes,analytical_biases_2,
+  type = "b",
+  col = 'red',
+  pch = 16
+)
+
+legend(
+  "topright",
+  legend = c("Simulated Biases","Analytical Biases"),
+  col = c('blue','red'),
+  pch = 16,
+  lty = 1
+)
+
+
+# Efficiency Vs Sample Size
+eff_10_2 <- (2^2/10)/variance_10_2
+eff_20_2 <- (2^2/20)/variance_20_2
+eff_50_2 <- (2^2/50)/variance_50_2
+eff_200_2 <- (2^2/200)/variance_200_2
+eff_400_2 <- (2^2/400)/variance_400_2
+eff_1000_2 <- (2^2/1000)/variance_1000_2
+
+effs_2 <- c(eff_10_2,eff_20_2,eff_50_2,
+            eff_200_2,eff_400_2,eff_1000_2)
+
+analytical_effs_2 <- c((9^2*8)/10^3,(19^2*18)/20^3,
+                       (49^2*48)/50^3,(199^2*198)/200^3,
+                       (399^2*398)/400^3,(999^2*998)/1000^3)
+
+plot(
+  sample_sizes,
+  effs_2,
+  ylim = c(0.6,1),
+  col = 'magenta',
+  pch = 16,
+  type = 'b',
+  main = expression("Plot of Sample Sizes Vs Efficiencies (" * lambda == 2 * ")")
+)
+
+lines(
+  sample_sizes,
+  analytical_effs_2,
+  col = 'red',
+  pch = 16,
+  type = 'b'
+)
+
+legend(
+  "bottomright",
+  legend = c("Simulated Efficiencies","Analytical Efficiencies"),
+  col = c('magenta','red'),
+  pch = 16,
+  lty = 1
+)
+
+
+# Mean Squared Error Vs Sample Size
+MSEs_2 <- c(MSE_10_2,MSE_20_2,MSE_50_2,
+            MSE_200_2,MSE_400_2,MSE_1000_2)
+
+analytical_MSE_2 <- c(
+  (2^2*10^2/((9^2)*8))+(2/9)^2,
+  (2^2*20^2/((19^2)*18))+(2/19)^2,
+  (2^2*50^2/((49^2)*48))+(2/49)^2,
+  (2^2*200^2/((199^2)*198))+(2/199)^2,
+  (2^2*400^2/((399^2)*398))+(2/399)^2,
+  (2^2*1000^2/((999^2)*998))+(2/999)^2
+)
+
+plot(
+  sample_sizes,
+  MSEs_2,
+  col = 'black',
+  type = 'b',
+  ylim = c(0,0.7),
+  pch = 16,
+  main = expression("Plot of Sample Sizes Vs Mean Squared Error (" * lambda == 2 * ")")
+)
+
+lines(
+  sample_sizes,
+  analytical_MSE_2,
+  col = 'red',
+  pch = 16,
+  type = 'b'
+)
+
+legend(
+  "topright",
+  legend = c("Simulated MSE","Analytical MSE"),
+  col = c('black','red'),
+  pch = 16
+)
