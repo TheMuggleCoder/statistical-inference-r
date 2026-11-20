@@ -1,0 +1,527 @@
+\documentclass{article}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{graphicx} % Required for inserting images
+
+\title{Statistical Inference Project}
+\author{Kallen McCarthy\\Sumit Singh}
+\date{November 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Question One}
+\textbf{Calculating Bias for an Exponential Distribution:}\\
+\begin{equation}
+    \hat{\lambda} = \frac{n}{\sum x_i}
+    \label{1}
+\end{equation}
+\begin{equation}
+    \operatorname{Bias}(\hat{\lambda}) = \text{E}[\hat{\lambda}] - \lambda
+    \label{2}
+\end{equation}
+Substituting equation \eqref{1} in to the expected value, we get: \begin{align}
+    \text{E}[\hat{\lambda}] &= \text{E}[\frac{n}{\sum x_i}]\\
+    &= n\text{E}[\frac{1}{\sum x_i}]
+    \label{3}
+    \end{align}
+If we let $\text{S} = \sum x_i$, we know that S has a Gamma distribution because we are letting S be the sum of n Exponential distributions.\\
+So, from equation \eqref{3} we get: \begin{equation}
+    \text{E}[\hat{\lambda}] = n\text{E}[\frac{1}{S}] 
+    \label{5}
+\end{equation}
+where $S \sim Gamma(n,\lambda)$.\\
+Using the Gamma Density function we can find the Expected value of the reciprocal of S: \begin{align}
+    \text{E}[\frac{1}{S}] &= \int_0 ^\infty \frac{1}{s}\frac{\lambda^n}{\Gamma(n)} s^{n-1} e^{-\lambda s} ds\\
+    &= \frac{\lambda^n}{\Gamma(n)}\int_0 ^{\infty} s^{n-2}e^{\lambda s}ds
+\end{align}
+Using the Gamma Integral Identity: $\int_0 ^\infty s^{\alpha-1}e^{-\lambda s}ds=\frac{\Gamma(\alpha)}{\lambda^\alpha}$ we get \begin{align}
+    \text{E}[\frac{1}{S}] &= \frac{\lambda^n}{\Gamma(n)}\frac{\Gamma(n-1)}{\lambda^{n-1}}\\
+    &= \frac{\lambda \Gamma(n-1)}{\Gamma(n)}
+\end{align}
+\newpage
+Use the fact that $\Gamma(n) = (n-1)\Gamma(n-1)$. Therefore: \begin{align}
+    \text{E}[\frac{1}{S}] &= \frac{\lambda \Gamma(n-1)}{(n-1)\Gamma(n-1)}\\
+    &= \frac{\lambda}{n-1}
+    \label{11}
+\end{align}
+So, from equation \eqref{5} we have: \begin{equation}
+    \text{E}[\hat{\lambda}] = \frac{n\lambda}{n-1}
+\end{equation}
+Substituting this into equation \eqref{2} we get: \begin{align}
+    \text{Bias}(\hat{\lambda}) &= \frac{n\lambda}{n-1} - \lambda \\
+    &= \frac{\lambda}{n-1}
+    \label{bias}
+\end{align}
+\textbf{Calculating Efficiency for an Exponential Distribution:}\\
+\begin{equation}
+    \text{eff}(\hat{\lambda}) = \frac{\text{CRLB}}{\text{Var}(\hat{\lambda})}
+    \label{6}
+\end{equation}
+So, in order to calculate the efficiency, we need to calculate the Variance and the Cramer-Rao Lower Bounds separately first.\begin{equation}
+    \text{CRLB} = \frac{1}{\mathcal{I}(\hat{\lambda})}
+    \label{7}
+\end{equation}
+where $\mathcal{I}(\hat{\lambda})$ is the Expected information of the maximum likelihood estimator $\hat{\lambda}$.\begin{equation}
+    \mathcal{I}(\lambda) = \text{E}\left[-\frac{\partial^2 \ell(\lambda)}{\partial \lambda^2}\right]
+    \label{8}
+\end{equation}
+We know that \begin{equation}
+    \frac{\partial\ell(\lambda)}{\partial \lambda} = \frac{n}{\lambda} - \sum x_i
+\end{equation}
+So, \begin{equation}
+    \frac{\partial^2\ell(\lambda)}{\partial \lambda^2} = -\frac{n}{\lambda^2}
+\end{equation}\begin{equation}
+    \implies \mathcal{I}(\hat{\lambda}) = \frac{n}{\lambda^2}
+\end{equation} \begin{equation}
+   \implies \text{CRLB} = \frac{\lambda^2}{n}
+\end{equation}
+\newpage
+\begin{equation}
+   \text{Var}(\hat{\lambda}) = \text{Var}(\frac{n}{\sum x_i}) = n^2\text{Var}(\frac{1}{S})
+\end{equation}
+where, once again, $S \sim \text{Gamma}(n,\lambda)$. From the properties of Expectation and Variance we know that \begin{equation}
+    \text{Var}(\frac{1}{S^2}) = \text{E}[\frac{1}{S^2}] - \big[\text{E}[\frac{1}{S}] \big]^2
+    \label{var}
+\end{equation}
+We know from equation \eqref{11} that \begin{equation}
+    \big[\text{E}[\frac{1}{S}] \big]^2=  \frac{\lambda^2}{(n-1)^2}
+\end{equation}
+So we need to calculate $\text{E}[\frac{1}{S^2}]$ using the Gamma density function once again. \begin{align}
+    \text{E}[\frac{1}{S^2}] &= \int_0 ^\infty \frac{1}{s^2}\frac{\lambda^n}{\Gamma(n)}s^{n-1}e^{-\lambda s}ds\\
+    &= \frac{\lambda^n}{\Gamma(n)}\int_0 ^\infty s^{n-3}e^{-\lambda s}ds
+\end{align}
+Using the Gamma Integral Identity function once again we get:\begin{align}
+   \text{E}[\frac{1}{S^2}]&= \frac{\lambda^n}{\Gamma(n)}\frac{\Gamma(n-2)}{\lambda^{n-2}}\\
+   &= \frac{\lambda^2 \Gamma(n-2)}{\Gamma(n)}
+\end{align}
+Since $\Gamma(n) = (n-1)\Gamma(n-1)$, we can say that $\Gamma(n-1) = (n-2)\Gamma(n-2)$, which means that $\Gamma(n) = (n-1)(n-2)\Gamma(n-2)$ \begin{align}
+    \implies \text{E}[\frac{1}{S^2}] &= \frac{\lambda^2\Gamma(n-2)}{(n-1)(n-2)\Gamma(n-2)}\\
+    &= \frac{\lambda^2}{(n-1)(n-2)}
+\end{align}
+Substituting into \eqref{var} we get: \begin{equation}
+    \text{Var}(\frac{1}{S^2}) = \frac{\lambda^2}{(n-1)^2} - \frac{\lambda^2}{(n-1)(n-2)}
+\end{equation}
+which simplifies to:\begin{equation}
+    \text{Var}(\frac{1}{S^2}) = \frac{\lambda^2}{(n-1)^2(n-2)}
+\end{equation}
+\begin{equation}
+    \implies \text{Var}(\hat{\lambda} ) = \frac{n^2 \lambda^2}{(n-1)^2 (n-2)}
+    \label{variance}
+\end{equation}
+\newpage
+Therefore \begin{align}
+    \text{eff}(\hat{\lambda}) &= \frac{\frac{\lambda^2}{n}}{\frac{n^2\lambda^2}{(n-1)^2(n-2)}}\\
+    & = \frac{\frac{1}{n}}{\frac{n^2}{(n-1)^2(n-2)}} \\
+    &= \frac{(n-1)^2(n-2)}{n^3}
+\end{align}
+\textbf{Note:} The $\lambda$'s cancel out and so changing the value of $\lambda$ will have no impact on the graphs.\\
+\textbf{Calculating Mean Squared Error for an Exponential Distribution:}\\
+\begin{equation}
+    \text{MSE}(\hat{\lambda}) = \text{Var}(\hat{\lambda}) + \big[\text{Bias}(\lambda)\big]^2
+\end{equation}
+Using the results from equations \eqref{bias} and \eqref{variance} we get: \begin{equation}
+   \text{MSE}(\hat{\lambda}) =\frac{n^2 \lambda^2}{(n-1)^2(n-2)} + \big[\frac{\lambda}{n-1}\big]^2
+\end{equation}
+Multiplying the right fraction by $(n-2)$ and simplifying down, we get: \begin{equation}
+    \text{MSE}(\hat{\lambda}) = \frac{\lambda^2(n+2)}{(n-1)(n-2)}
+\end{equation}
+The sample size $(n)$ values of $(10,20,50,200,400,1000)$ and the $\lambda$ values of $(0.5,1,2)$ were substituted into the equations for the Bias, the efficiency and the mean squared error calculated above to produce all of the graphs below.\\
+\textbf{Bias Graphs:}\\
+
+\begin{figure}[htbp]
+    \centering
+
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{bias1.png}
+        \caption{$\lambda = 1$}
+        \label{fig:bias1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{bias2.png}
+        \caption{$\lambda = 0.5$}
+        \label{fig:bias2}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{bias3.png}
+        \caption{$\lambda = 2$}
+        \label{fig:bias3}
+    \end{minipage}
+\end{figure}
+\noindent As we can see from the above graphs, the simulated biases and the analytical biases are very close to each other and don't change in their closeness when the value is lambda adjusted. The only difference in the graphs is the individual data points for bot the analytical and simulated biases. The biases are larger for larger values of $\lambda$ bur as n gets very big, the difference between the biases diminishes can be seen by the data points for $n=1000$ in each graph.
+\newpage
+\textbf{Efficiency Graphs:}\\
+\begin{figure}[H]
+    \centering
+    
+    \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=0.5\linewidth]{eff1.png}
+    \caption{$\lambda = 1$}
+    \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{eff2.png}
+        \caption{$\lambda = 0.5$}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{eff3.png}
+        \caption{$\lambda = 2$}
+        \label{fig:placeholder}
+    \end{minipage}
+\end{figure}
+\noindent As we can see, there is no difference between the three graphs. This was to be expected because $\lambda$ does not appear in the expression that was obtained for the efficiency of the maximum likelihood estimator. \\
+\textbf{Mean Squared Error Graphs:}\\
+\begin{figure}[htbp]
+    \centering
+
+    \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=0.5\linewidth]{mse1.png}
+    \caption{$\lambda = 1$}
+    \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{mse2.png}
+        \caption{$\lambda = 0.5$}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{mse3.png}
+        \caption{$\lambda = 2$}
+        \label{fig:placeholder}
+    \end{minipage}
+\end{figure}\\
+Similarly to the graphs for the biases, the simulated graph and the analytical graph are very close to each other and the closeness does not change as $\lambda$ increases. \\
+When comparing all three graphs, the mean squared error and the bias converge to zero as $n\rightarrow \infty$. However, the efficiency seems to increase as $n\rightarrow \infty$. It is clear from the graphs that the simulations for the bias, efficiency, and mean squared error are all accurate representations of the analytical computations of these three values.
+\newpage 
+\section{Question Two}
+\textbf{Histograms for Part (i)}
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Histogram1.png}
+    \caption{Normal Histogram n = 5}
+    \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{Histogram2.png}
+        \caption{Normal Histogram n = 20}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{Histogram3.png}
+        \caption{Normal Histogram n = 50}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+\end{figure}\\
+\textbf{QQ Plots for Part (i)}
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=0.5\linewidth]{QQ1.png}
+    \caption{Normal QQ Plot n = 5}
+    \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{QQ2.png}
+        \caption{Normal QQ Plot n = 20}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{QQ3.png}
+        \caption{Normal QQ Plot n = 50}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+\end{figure}\\
+As we can see from the histograms, 1000 sample means generated in R follow a normal distribution for sample sizes n = 5, 20 and 50 due to the symmetric shape. Similarly, the qq plot of the residuals approximately follows a straight line which is also indicative of a normal distribution.\\\\
+\textbf{Histograms for Exponentially Distributed Data}\\
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+    \includegraphics[width=0.5\linewidth]{Histogram4.png}
+    \caption{Exponential Histogram n = 5}
+    \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{Histogram5.png}
+        \caption{Exponential Histogram n = 20}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{Histogram6.png}
+        \caption{Exponential Histogram n = 50}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+\end{figure}\\
+\textbf{QQ Plots for Exponentially Distributed Data}\\
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+    \includegraphics[width=0.5\linewidth]{QQ4.png}
+    \caption{Exponential QQ Plot n = 5}
+    \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{QQ5.png}
+        \caption{Exponential QQ Plot n = 20}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{QQ6.png}
+        \caption{Exponential QQ Plot n = 50}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+\end{figure}
+\newpage
+\noindent As we can see from the histograms for exponentially distributed data, the distribution appears to be slightly skewed to the right for a smaller sample size n = 5. However, as the sample size increases, the shape becomes more symmetric, representing a more normal distribution. In the qq plots, the residuals follow an arc shape, not suggesting a normal distribution. For larger sample sizes n = 20 and n = 50, this arc shape straightens out, further indicating that the distribution becomes approximately normal as the sample size increases.\\\\
+\textbf{Histograms for Bernoulli Data p = 0.5}\\
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Histogram7.png}
+    \caption{Bernoulli Histogram (p = 0.5) n = 5}
+    \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{Histogram8.png}
+        \caption{Bernoulli Histogram (p = 0.5) n = 20}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{Histogram9.png}
+        \caption{Bernoulli Histogram (p = 0.5) n = 50}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+\end{figure}\\
+\textbf{QQ Plots for Bernoulli Data p = 0.5}\\
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=0.5\linewidth]{QQ7.png}
+    \caption{Bernoulli QQ Plot (p = 0.5) n = 5}
+    \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{QQ8.png}
+        \caption{Bernoulli QQ Plot (p = 0.5) n = 20}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{QQ9.png}
+        \caption{Bernoulli QQ Plot (p = 0.5) n = 50}
+        \label{fig:placeholder}
+    \end{minipage}
+\end{figure}\\
+Observing the histograms for Bernoulli data above, for n = 5, the plot appears to be somewhat symmetric but unlike normal data, there are only 6 distinct points. This is because Bernoulli data is discrete. For the same reason, the QQ plots show horizontal bands as opposed to points following a particular shape. As the sample size increases, the distribution resembles a bell shape, suggesting normality. Additionally, the QQ plots show improved alignment with the reference line for n = 20 and n = 50.
+\newpage
+\noindent \textbf{Histograms for Bernoulli Data p = 0.05}\\
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Histogram10.png}
+    \caption{Bernoulli Histogram (p = 0.05) n = 5}
+    \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{Histogram11.png}
+        \caption{Bernoulli Histogram (p = 0.05) n = 20}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{Histogram12.png}
+        \caption{Bernoulli Histogram (p = 0.05) n = 50}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+\end{figure}\\
+\textbf{QQ Plots for Bernoulli Data p = 0.05}\\
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=0.5\linewidth]{QQ10.png}
+    \caption{Bernoulli QQ Plot (p = 0.05) n = 5}
+    \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{QQ11.png}
+        \caption{Bernoulli QQ Plot (p = 0.05), n = 20}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.5\linewidth]{QQ12.png}
+        \caption{Bernoulli QQ Plot (p = 0.05) n = 50}
+        \label{fig:placeholder}
+    \end{minipage}
+    \hfill
+\end{figure}\\
+The sample distribution remains right skewed for smaller sample sizes. Even at n = 50, it is right skewed. This is because the probability of success is small (p = 0.05), which results in relatively few successes with each sample.
+Overall the result show that the Central Limit Theorem describes the convergence of sampling distribution towards normal distribution as the value of n increases (n being sample size). However the rate of convergence depends on the population distribution. Skewed distributions and distributions with low probability of success may require comparatively larger n value (sample size) for a reasonable normal approximation.
+\newpage
+\section{Question Three}
+\textbf{Computing the Maximum Likelihood Estimator for $\theta$:}
+
+\begin{equation}
+    f(x) = cx^{\theta-1}
+    \label{density}
+\end{equation}
+Find the value of the normalising constant $c$, using a maximum x value of 12 computed in R:
+
+\begin{equation}
+    \int_0^{12} cx^{\theta-1}dx =1
+    \label{density2}
+\end{equation}
+Left hand side:
+\begin{align}
+    \int_0^{12} cx^{\theta-1}dx 
+    &= \left.\frac{cx^\theta}{\theta}\right|_0^{12}\\
+    &= \frac{c12^\theta}{\theta}
+\end{align}
+From equation \eqref{density2}:
+
+\begin{equation}
+    \frac{c12^\theta}{\theta} = 1\\
+    \implies c = \frac{\theta}{12^\theta}
+\end{equation}
+Substitute this value for $c$ into the log likelihood function $\ell(\theta)$.
+
+\begin{align}
+    \ell(\theta) &= \sum_{i=1}^n \log(f(x_i))\\
+    &= \sum_{i=1}^n \log\left(\frac{\theta x_i^{\theta-1}}{12^\theta}\right)\\
+    &= \sum_{i=1}^n \left[\log(\theta)+(\theta-1)\log(x_i)-\theta\log(12)\right]\\
+    &= n\log(\theta)+(\theta-1)\sum_{i=1}^n\log(x_i)-n\theta\log(12)
+\end{align}
+To obtain the maximum likelihood estimator we must differentiate the log likelihood with respect to $\theta$.
+
+\begin{align}
+    \frac{\partial\ell(\theta)}{\partial\theta}
+    &= \frac{n}{\theta}+\sum_{i=1}^n\log(x_i)-n\log(12)
+    \label{diff}
+\end{align}
+Set equation \eqref{diff} to zero.
+
+\begin{align}
+    \frac{n}{\theta}+\sum_{i=1}^n\log(x_i)-n\log(12) &= 0\\
+    \frac{n}{\theta} &= n\log(12)-\sum_{i=1}^n\log(x_i)\\
+    \implies \hat{\theta}_{MLE} &= \frac{n}{n\log(12)-\sum_{i=1}^n\log(x_i)}
+\end{align}
+
+\noindent \textbf{Computing the Method of Moments Estimator for $\theta$:}\\
+\begin{equation}
+    \text{E}[X] = \bar{X}
+    \label{moments}
+\end{equation}
+where $\bar{X}$ represents the sample mean.\\
+Calculate the expected value of $X$: \begin{align}
+    \text{E}[X] &= \int_0^{12} xf(x)dx \\
+    &= \int_0^{12} x \frac{\theta}{12^\theta} x^{\theta -1}dx \\
+    &= \int_0^{12}\frac{\theta}{12^\theta} x^\theta dx \\
+    &= \left.\frac{\theta x^{\theta+1}}{12^\theta (\theta+1)}\right|_0^{12}\\
+    &= \frac{12\theta}{\theta+1}
+\end{align}
+Substitute this value into equation \eqref{moments}:\begin{align}
+    \frac{12\theta}{\theta+1} &= \bar{X}\\
+    \implies \frac{\theta+1}{12\theta} = \frac{1}{\bar{X}}\\
+    \implies \frac{1}{12}+\frac{1}{12\theta} = \frac{1}{\bar{X}}\\
+    \implies \frac{1}{12\theta} = \frac{1}{\bar{X}}-\frac{1}{12} \\
+    \implies \hat{\theta} = \frac{\bar{X}}{12-\bar{X}}
+\end{align}
+\newpage
+\noindent \textbf{Deriving the Cumulative Distribution Function $F(x)$:}\\
+\begin{align}F(x) 
+&= \int_0^x f(u)du\\
+&= \int_0^x \frac{\theta}{12^\theta} u^{\theta-1}du\\
+&= \left.\frac{u^\theta}{12^\theta}\right|_0^x \\
+&= \frac{x^\theta}{12^\theta}
+\end{align}
+\textbf{Deriving the Inverse Cumulative Distribution Function $F^{-1}(x)$:}\\
+In order to find the inverse cumulative distribution function, we have to isolate $x$: \begin{align}
+    \text{Let $y$} &= \Big(\frac{x}{12}\Big)^\theta
+\end{align}
+Take both sides to the power of $\frac{1}{\theta}$ to get: \begin{align}
+    y^{\frac{1}\theta} &= \frac{x}{12} \\
+    \implies x &= 12y^{\frac{1}{\theta}}
+\end{align}
+Therefore,\begin{equation}
+    F^{-1}(x) = 12x^{\frac{1}{\theta}}
+\end{equation}
+\textbf{Histograms:}\\
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\linewidth]{histograms.png}
+    \caption{Histograms for $\theta = 0.5, 1,1.5,2$}
+    \label{histograms}
+\end{figure}\\
+As we can see from Figure \ref{histograms}, the distribution is skewed to the right when we let $\theta=0.5$. As we increase the size of $\theta$ in increments of $0.5$ the shape changes quite significantly. For $\theta = 1$, the shape of the histogram represents a uniform distribution. The histogram for $\theta = 1.5$ is slightly skewed to the left and the histogram for $\theta = 2$ is more heavily skewed to the left.
+\newpage
+\noindent \textbf{Log Likelihood Plots :}\\
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Loglikelihoodplots.png}
+    \caption{Plots of different $\theta$ values Vs the Log likelihood function with the corresponding maximum likelihood and method of moments estimators}
+    \label{fig:placeholder}
+\end{figure}\\
+It is evident from the graphs above that the maximum likelihood estimator and the method of moments estimator are very close in value even for a smaller sample size. The maximum likelihood estimator is marginally closer to the true value of $\theta$ when n=10 but as the value of n increases, the two estimators are almost identical to the true value of $\theta$, as we can see in the graphs for n=100 and n=1000.
+\newpage
+\section{Question Four}
+\textbf{Bootstrapping:} A bootstrap confidence interval is a range of values that is calculated without the need for assumptions on normal distributions or strict mathematical formulas. The idea of bootstrapping is to take a certain number of new samples, all of the same size from the original data, but there is replacement which means that some data points are kept and others are left out. The mean or median is calculated for each of the new samples and then a confidence interval is created based on this distribution.
+
+\end{document}
